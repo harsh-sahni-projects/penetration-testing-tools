@@ -1,0 +1,101 @@
+body {
+	font-family: sans-serif;
+	background-color: #E3F4F4;
+	margin: 0px;
+	color:  #444;
+}
+
+h1 {
+	padding: 2rem;
+	background-color: #C4DFDF;
+	margin: 0px;
+}
+h3#left-heading {
+	display: flex;
+	justify-content: space-between;
+}
+
+/*input[type="text"] {
+	border: 1px solid #999;
+	width: 30rem;
+}*/
+
+textarea {
+	width: 100%;
+	min-height: 20rem;
+}
+
+label {
+	user-select: none;
+}
+
+button {
+	width: 6rem;
+	padding: 0.5rem;
+	cursor: pointer;
+	border: 0px;
+	border-radius: 5px;
+	margin-left: .7rem;
+}
+
+#run-example-btn, #paste-btn {
+	cursor: pointer;
+	color: lightseagreen;
+	text-decoration: underline;
+	/*opacity: 0.8;*/
+	font-size: 0.9rem;
+	position: relative;
+	/*top: 8px;*/
+	margin-left: 10px;
+}
+
+button#submit {
+	background-color: lightseagreen;	
+}
+
+button#clear-btn {
+	background-color: #fff;
+	border: 1px solid #ccc;	
+}
+
+.error {
+	color: #bf2626;
+}
+
+#submit[disabled] {
+	background-color: #bbb;
+}
+
+.container {
+	display: flex;
+	justify-content: space-between;
+	padding: 2rem;
+}
+
+#button-container {;
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+}
+
+.left, .right {
+	width: 48%;
+}
+
+.left {
+	display: flex;
+	flex-direction: column;
+	align-content: 
+}
+
+.left > * {
+	margin-bottom: .7rem;
+}
+#results-container {
+	word-wrap: break-word;
+}
+
+#results-container pre {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+	<link rel="stylesheet" type="text/css" href="../styles/homepage.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<title>Pen Testing Toolkit</title>
+</head>
+<body>
+	<h1>Pen testing toolkit</h1>
+	<!-- <form>
+		<label for="endpoint">Elasticsearch endpoint:</label>
+		<input type="text" name="endpoint" placeholder="" id="endpoint-input"/><br>
+		<label for="cookie1">security_authentication cookie</label>
+		<input type="text" name="cookie1" placeholder="" id="security-cookie-input"/>
+	</form> -->
+	<div class="container">
+		<div class="left">
+			<h3 id="left-heading">Paste the Curl request here:
+				<div>
+					<span id="run-example-btn" onclick="runExample()">
+						Run an example
+					</span>
+					<span id="paste-btn" onclick="paste()">
+						Paste from clipboard
+					</span>
+				<div>
+			</h3>
+			<textarea id="curlReqInput"></textarea>
+			<!-- <section>
+				<input type="checkbox" id="sendCookieInput">
+				<label for="sendCookieInput">Make request "with" cookies</label>
+			</section> -->
+			<div id="button-container">
+				<button id="clear-btn" onclick="clearInput()">Clear</button>
+				<button id="submit" onclick="fire()">Submit</button>
+			</div>
+		</div>
+		<div class="right">
+			<h3>Result:</h3>
+			<div id="results-container">
+				
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+window.onload = () => {
+	document.getElementById('curlReqInput').setAttribute('placeholder',
+		'EXAMPLE: \n\n' +  _getSampleQuery())
+	document.getElementById("curlReqInput").focus();
+}
+// document.getElementById("curlReqInput").focus();
+function fire() {
+	/* FRONTEND */
+	document.getElementById('results-container').innerHTML = '';
+	const loaderIcon = `<i class="fa fa-circle-o-notch fa-spin"></i>`;
+	document.getElementById('submit').innerHTML = loaderIcon;
+	document.getElementById("submit").disabled = true;
+	document.getElementById('results-container').innerHTML = 
+		`Loading ` + loaderIcon;
+
+
+	/* API */
+	const curlReq = document.getElementById('curlReqInput').value;
+	axios.post('/run-curl', {
+			data: curlReq
+		}).then(res => {
+			const reqParams = res.data.requestParams;
+			let result = res.data.resultReceived ?? res.data.error;
+					result = JSON.stringify(result, null, 2);					    
+
+			const preTagClass = res.data.error ? 'error' : '';
+			const output = `<pre class="${preTagClass}">`
+									 +			`${result}`
+									 +	`</pre>`;
+			document.getElementById('results-container').innerHTML = output;
+
+			document.getElementById('submit').innerHTML = `Submit`;
+			document.getElementById("submit").disabled = false;
+						
+		}).catch(err => {
+			console.log(err)
+			const output = `<pre class="error">`
+									 +		`${JSON.stringify(err, null, 2)}`
+									 + `</pre>`;
+			document.getElementById('results-container').innerHTML = output;
+
+			document.getElementById('submit').innerHTML = `Submit`;
+			document.getElementById("submit").disabled = false;
+		})
+}
+
+function clearInput() {
+	document.getElementById('curlReqInput').value = ''
+	document.getElementById("curlReqInput").focus();
+}
+
+function paste() {
+	navigator.clipboard.readText()
+					 .then((clipText) => {
+					 	document.getElementById('curlReqInput').value = clipText
+					 });
+
+	document.getElementById('submit').click();
+}
+
+function runExample() {
+	document.getElementById('curlReqInput').value = _getSampleQuery();
+	document.getElementById('submit').click();
+}
+
+function _getSampleQuery() {
+	return `curl 'http://analytics-fiq-dc0c5280-c73d-4ab0.fiq-dev.com/api/console/proxy?path=_search&method=GET'<br>
+  -H 'Connection: keep-alive'<br>
+  -H 'Pragma: no-cache'<br>
+  -H 'Cache-Control: no-cache'<br>
+  -H 'Accept: text/plain, */*; q=0.01'<br>
+  -H 'kbn-xsrf: kibana'<br>
+  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'<br>
+  -H 'Content-Type: application/json'<br>
+  -H 'Sec-GPC: 1'<br>
+  -H 'Origin: http://analytics-fiq-dc0c5280-c73d-4ab0.fiq-dev.com'<br>
+  -H 'Referer: http://analytics-fiq-dc0c5280-c73d-4ab0.fiq-dev.com/app/dev_tools'<br>
+  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8'<br>
+  -H 'Cookie: amp_adc4c4=CjuiF3QUOJgb0I8TI0tgZN.RUo1S0xadDNobk94U0FnMHh0UjlDdVloUW1kMg==..1gpfepuqq.1gpfepuqq.0.8.8; security_authentication=Fe26.2**552a060ec1ec1445ca11e9e7ee706f5d9a2ab7adfd055a6356edf9482fd6e5ff*KbHm5fTwa2pwZwi4s8QBiQ*K5cI3B4BP8A5LBB83n4HExdgPOHH6g84M_sw3Pf5-0Ar2DjD1Y4VzLw1mRSwOi_wKHxz06gF8qe7W9Zk9sW7sSm26XN_K0xKFpJSFAvzKHuoMsjfdNy_vWUl2p3OBwGS5-tOxmKJ85BEw2NAoxjSyUuanr9fXn0Ab16I7IMWDSPvKsyx0G8Bd6Eguy22QsNyypFiJq0839T3M7NVBNsSlQ**042f5a2e4342740180c00c112e23bf7179f09e101b2b4f92830e1063e07501f3*ixe28qiCnl07_xCqtS7FxAc6zexgFdisrXGERcGN1l4'<br>
+  --data-raw $'{\n  "query": {\n    "match_all": {}\n  }\n}\n'<br>
+  --compressed<br>
+  --insecure`
+}
+
+</script>
+</html>
