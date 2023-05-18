@@ -28,10 +28,18 @@ app.post('/run-curl', (req, response) => {
 								 : null;
 	console.log('ENDPOINT: ', endpoint, '\n');
 
-	let headers = str.match(/(?<=-H ')([^:]*)(: )([^']*)/g)
-	headers = headers.map(header => {
-		return header.split(/: /);
+	if (!endpoint) return response.send({
+		error: {
+			error: "Invalid endpoint found: " + endpoint
+		}
 	})
+
+	let headers = str.match(/(?<=-H ')([^:]*)(: )([^']*)/g)
+	if (headers) {
+		headers = headers.map(header => {
+			return header.split(/: /);
+		})
+	}
 	console.log('HEADERS: ', headers, '\n')
 
 	const cookieHeader = headers.find(e => e[0].match(/cookie/gi))

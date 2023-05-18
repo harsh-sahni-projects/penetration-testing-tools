@@ -103,9 +103,9 @@ function paste() {
 	navigator.clipboard.readText()
 					 .then((clipText) => {
 					 	document.getElementById('curlReqInput').value = clipText
+						document.getElementById('submit').click();
 					 });
 
-	document.getElementById('submit').click();
 }
 
 function runExample() {
